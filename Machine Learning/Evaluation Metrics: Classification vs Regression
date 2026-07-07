@@ -1,0 +1,22 @@
+## Evaluation Metrics: Classification vs Regression
+
+| Category        | Metric          | Meaning                                                | Best Use Case                                      |
+|-----------------|-----------------|--------------------------------------------------------|----------------------------------------------------|
+| Classification  | Accuracy        | % of correct predictions                              | Balanced datasets; simple baseline                 |
+| Classification  | Precision       | Correct positive predictions out of predicted positives | When false positives are costly (spam detection)   |
+| Classification  | Recall          | Correct positive predictions out of actual positives   | When false negatives are costly (medical tests)    |
+| Classification  | F1 Score        | Harmonic mean of precision & recall                   | Imbalanced datasets                                |
+| Classification  | Confusion Matrix| Table of TP, FP, TN, FN                               | Detailed error analysis                            |
+| Classification  | ROC Curve       | TPR vs FPR across thresholds                          | Visualizing classifier performance                 |
+| Classification  | AUC (ROC-AUC)   | Area under ROC curve                                  | Comparing models; threshold-independent            |
+| Classification  | Log Loss        | Penalizes confident wrong predictions                 | Probabilistic classifiers                          |
+
+| Category        | Metric          | Meaning                                                | Best Use Case                                      |
+|-----------------|-----------------|--------------------------------------------------------|----------------------------------------------------|
+| Regression      | MAE             | Average absolute error                                | Easy interpretation; robust to outliers            |
+| Regression      | MSE             | Average squared error; big errors penalized more      | Training optimization; sensitive to outliers       |
+| Regression      | RMSE            | Square root of MSE; interpretable                     | Most common regression metric                      |
+| Regression      | R²              | % of variance explained by model                      | Understanding model fit                            |
+| Regression      | Adjusted R²     | R² penalized for extra features                       | Comparing models with different feature counts     |
+| Regression      | MAPE            | Average % error                                       | Business forecasting; scale-free                   |
+| Regression      | MSLE            | Penalizes under-prediction more                       | Growth/exponential data                            |
