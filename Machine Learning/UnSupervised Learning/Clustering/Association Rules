@@ -1,0 +1,139 @@
+🌱 Support, Confidence, Lift:
+
+1. Support — How often the itemset appears
+Support(A) = fraction of all transactions that contain A
+It tells you how common an item or itemset is in the entire dataset.
+
+Example:
+If 50 out of 500 transactions contain Egg,
+Support(Egg) = 50/500 = 0.1
+
+2. Confidence — Probability of B given A
+Confidence(A → B) = Support(A ∩ B) / Support(A)
+It tells you how likely B is, given that A has already happened.
+
+Example:
+If 100 transactions contain Egg, and 50 contain Egg+Milk,
+Confidence(Egg → Milk) = 50/100 = 0.5 = 50%
+
+3. Lift — Strength of the association
+Lift(A → B) = Confidence(A → B) / Support(B)
+It tells you whether A and B occur together more than expected.
+
+Lift > 1 → positive association
+
+Lift = 1 → no association
+
+Lift < 1 → negative association
+
+Example:
+Confidence = 0.5
+Support(Milk) = 0.3
+Lift = 0.5 / 0.3 = 1.67  
+Meaning: Egg buyers are 1.67× more likely to buy milk than average.
+
+
+🌱 What Apriori actually does?
+Apriori is based on a simple principle:
+
+If an itemset is frequent, all of its subsets must also be frequent.
+
+This is called the Apriori property.
+
+Meaning:
+
+If {Egg, Milk, Bread} is frequent
+
+Then {Egg, Milk}, {Egg, Bread}, {Milk, Bread}, {Egg}, {Milk}, {Bread}
+must also be frequent.
+
+This rule helps us avoid checking useless combinations.
+
+🌱 Why Apriori uses minimum support?
+Apriori doesn’t check all possible item combinations.
+Instead, it filters them using a minimum support threshold.
+
+Here’s the one idea:
+
+Apriori only keeps itemsets that meet the minimum support.
+Everything else is thrown away early.
+
+This is called pruning.
+
+Why this matters:
+Without pruning, you would check millions of combinations.
+
+With pruning, you only check combinations that have a chance of being frequent.
+
+This makes Apriori efficient.
+
+🌱 Apriori’s Full Workflow 
+Here is the entire Apriori process, broken into simple steps.
+
+I’ll give you one clean workflow, then pause.
+
+Step 1 — Scan the dataset
+Count support for all 1‑itemsets.
+Keep only those that meet minimum support.
+This becomes L1.
+
+Step 2 — Generate candidate 2‑itemsets (C2)
+
+Join L1 with itself to form pairs.
+Example:
+Egg + Milk
+Egg + Bread
+Milk + Bread
+
+Then scan the dataset again to count support for each pair.
+
+Keep only those that meet minimum support → L2.
+
+Step 3 — Generate candidate 3‑itemsets (C3)
+Join L2 with itself.
+Example:
+If L2 contains:
+{Egg, Milk}
+
+{Egg, Bread}
+
+{Milk, Bread}
+
+Then C3 contains:
+
+{Egg, Milk, Bread}
+
+Now prune:
+If any subset (like {Milk, Bread}) is not frequent,
+remove the candidate.
+
+Scan dataset again → keep frequent ones → L3.
+
+Step 4 — Repeat until no more itemsets can be generated
+Apriori keeps generating:
+
+C4 → L4
+
+C5 → L5
+
+…
+
+Until a level produces no frequent itemsets.
+
+Then Apriori stops.
+
+Step 5 — Generate association rules
+From all frequent itemsets (L1, L2, L3…),
+Apriori generates rules and calculates:
+
+Support
+
+Confidence
+
+Lift
+
+This is where your earlier learning connects.
+
+🌼 In one sentence
+Apriori =
+Generate candidates → prune → count support → keep frequent → repeat.
