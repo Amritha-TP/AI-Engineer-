@@ -163,3 +163,36 @@ Backpropagation is the **learning phase** of a neural network.
 
 Together, forward and backward propagation form the core training loop of every neural network.
 
+=========================================================================================================================
+
+Gradient = how much the loss changes when you change a weight.
+
+# 📉 Gradient Descent
+
+## 🌟 What is Gradient Descent?
+
+**Gradient Descent** is an optimization algorithm used to **minimize a loss function** by iteratively updating the model’s parameters (weights and biases).  
+It is the core learning mechanism behind neural networks and most machine learning models.
+
+The idea is simple:
+> Move the weights in the direction that **reduces the error** the fastest.
+
+---
+
+## 🔧 How Gradient Descent Works
+
+1. **Compute the loss**  
+   Compare the model’s prediction with the actual target.
+
+2. **Calculate gradients**  
+   Use backpropagation to compute how much each weight contributed to the error.
+
+3. **Update weights**  
+   Adjust weights in the opposite direction of the gradient:
+how gradient is calculated?
+Gradient is calculated by applying the chain rule to measure how the loss changes with respect to each weight.
+
+🔥 One‑Sentence Interview Summary
+“Backpropagation computes the gradients, and Gradient Descent uses those gradients to update the weights so the model’s error gets smaller after every iteration.”
+
+
