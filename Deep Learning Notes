@@ -28,3 +28,138 @@ Deep learning is used because it:
 
 In short:
 > Deep learning is chosen when data is large, patterns are complex, and we need highly accurate, end-to-end learning from raw inputs.
+
+===================================================================================================================================================
+
+# 🧠 Artificial Neural Networks (ANN) & Building Blocks of MLP
+
+## 🌟 Artificial Neural Network (ANN)
+
+An **Artificial Neural Network (ANN)** is a computational model inspired by the human brain.  
+It consists of interconnected neurons that learn patterns from data by adjusting **weights** and **biases**.
+
+### Key Characteristics
+- Processes input data through layers of neurons.
+- Each neuron performs:  
+  **Linear transformation:** `z = W·x + b`  
+  **Activation:** `a = activation(z)`
+- Learns by minimizing a loss function using **backpropagation**.
+
+---
+
+## 🧱 Multi-Layer Perceptron (MLP)
+
+A **Multi-Layer Perceptron (MLP)** is a type of ANN with **multiple hidden layers**, making it capable of learning complex, non-linear relationships.
+
+### 🔧 Building Blocks of an MLP
+
+#### 1. **Input Layer**
+- Receives raw input features.
+- Passes data to the next layer without computation.
+
+#### 2. **Hidden Layers**
+- One or more layers containing neurons.
+- Each neuron applies weights, biases, and an activation function.
+- More layers → ability to learn deeper patterns.
+
+#### 3. **Weights & Biases**
+- **Weights:** Strength of connections between neurons.  
+- **Biases:** Allow shifting the activation function.  
+- These parameters are learned during training.
+
+#### 4. **Activation Functions**
+Introduce non-linearity so the network can learn complex patterns.
+
+Common activations:
+- ReLU  
+- Sigmoid  
+- Tanh  
+- Softmax (output layer for classification)
+
+#### 5. **Output Layer**
+- Produces final predictions.
+- Activation depends on the task (e.g., Softmax for classification).
+
+#### 6. **Loss Function**
+Measures how far predictions are from actual targets.
+
+Examples:
+- Cross-Entropy Loss  
+- Mean Squared Error (MSE)
+
+#### 7. **Backpropagation + Optimizer**
+- Backpropagation computes gradients of the loss w.r.t weights.
+- Optimizers (SGD, Adam) update weights to reduce error.
+
+---
+
+## 📌 Summary
+
+- **ANN**: Brain-inspired model made of neurons that learn patterns.  
+- **MLP**: ANN with multiple hidden layers.  
+- **Core components**: Input layer, hidden layers, output layer, weights, biases, activations, loss function, backpropagation, optimizer.
+
+---
+
+## 📚 Use Cases
+- Classification  
+- Regression  
+- Pattern recognition  
+- Feature extraction  
+- Deep learning foundations (CNNs, RNNs, Transformers)
+
+# 🔁 Forward Propagation & Backpropagation in Deep Learning
+
+## 🚀 Forward Propagation
+
+Forward propagation is the **prediction phase** of a neural network.
+
+### 🔹 What happens in forward propagation?
+1. Input features are fed into the network.
+2. Each neuron performs:
+   - **Linear transformation:**  
+     `z = W·x + b`
+   - **Activation function:**  
+     `a = activation(z)`
+3. This process continues layer by layer.
+4. The final output is produced (e.g., class probabilities).
+
+### 🔹 Purpose
+- Generate predictions.
+- Compute the **loss** by comparing predictions with actual labels.
+
+Forward propagation does **not** guarantee correct predictions — it simply computes them based on current weights.
+
+---
+
+## 🔁 Backpropagation
+
+Backpropagation is the **learning phase** of a neural network.
+
+### 🔹 What happens in backpropagation?
+1. The loss (error) is calculated.
+2. The network moves **backward** from the output layer to the input layer.
+3. Using the **chain rule**, it computes how much each weight contributed to the error.
+4. Gradients are calculated for:
+   - Weights  
+   - Biases  
+   - Activations  
+5. An optimizer (e.g., SGD, Adam) updates the weights:
+   `W_new = W_old - learning_rate * gradient`
+
+### 🔹 Purpose
+- Reduce error in the next forward pass.
+- Adjust weights so predictions get closer to the actual output.
+
+---
+
+## 📌 Summary
+
+- **Forward Propagation:**  
+  The network makes a prediction by passing inputs through layers using weights, biases, and activation functions.
+
+- **Backpropagation:**  
+  The network learns by calculating errors, computing gradients, and updating weights to improve future predictions.
+
+Together, forward and backward propagation form the core training loop of every neural network.
+
