@@ -34,7 +34,7 @@ class CIFAR10Predictor:
 
     def __init__(
         self,
-        model_path: str = "model/cifar10.h5",
+        model_path: str = "model/cifar10_model.h5",
         class_map_path: str = "model/class_names.json",
     ):
         if self._initialized:
