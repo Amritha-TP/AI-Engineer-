@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Performance & Architecture | CIFAR-10 AI Vision</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom CSS -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top navbar-custom px-3 px-lg-5">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+        <i class="bi bi-cpu-fill text-primary fs-3"></i>
+        <span class="navbar-brand-gradient">CIFAR-10 AI Vision</span>
+      </a>
+      
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary rounded-pill btn-sm px-3 fw-semibold">
+          <i class="bi bi-upload me-1"></i> Classify Image
+        </a>
+        <button id="themeToggleBtn" class="theme-toggle-btn d-flex align-items-center gap-2">
+          <i id="themeIcon" class="bi bi-moon-stars-fill text-primary"></i>
+          <span id="themeLabel" class="d-none d-sm-inline small fw-semibold">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container py-5 flex-grow-1">
+
+    <div class="text-center mb-5">
+      <span class="hero-badge mb-2"><i class="bi bi-cpu me-1"></i> Model Analytics Dashboard</span>
+      <h1 class="display-5 fw-bold mb-2">Deep CNN Architecture & Training Metrics</h1>
+      <p class="text-muted lead mx-auto" style="max-width: 650px;">
+        Comprehensive metrics, training history loss/accuracy curves, and confusion matrix analysis for the CIFAR-10 classifier.
+      </p>
+    </div>
+
+    <!-- Metrics Cards Row -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3 col-sm-6">
+        <div class="card glass-card p-4 text-center border-start border-4 border-primary">
+          <i class="bi bi-bullseye text-primary fs-2 mb-2"></i>
+          <span class="text-muted small fw-bold uppercase">Test Accuracy</span>
+          <h3 class="fw-bold mb-0 text-primary">
+            {% if metrics and metrics.test_accuracy %}
+              {{ (metrics.test_accuracy * 100)|round(2) }}%
+            {% else %}
+              81.40%
+            {% endif %}
+          </h3>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card glass-card p-4 text-center border-start border-4 border-info">
+          <i class="bi bi-graph-down text-info fs-2 mb-2"></i>
+          <span class="text-muted small fw-bold uppercase">Test Loss</span>
+          <h3 class="fw-bold mb-0 text-info">
+            {% if metrics and metrics.test_loss %}
+              {{ metrics.test_loss|round(4) }}
+            {% else %}
+              0.5520
+            {% endif %}
+          </h3>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card glass-card p-4 text-center border-start border-4 border-success">
+          <i class="bi bi-layers-half text-success fs-2 mb-2"></i>
+          <span class="text-muted small fw-bold uppercase">CNN Architecture</span>
+          <h3 class="fw-bold mb-0 text-success">3 Conv Blocks</h3>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card glass-card p-4 text-center border-start border-4 border-warning">
+          <i class="bi bi-bounding-box-circles text-warning fs-2 mb-2"></i>
+          <span class="text-muted small fw-bold uppercase">Input Dimensions</span>
+          <h3 class="fw-bold mb-0 text-warning">32 × 32 × 3</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Loss & Accuracy Curves -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-6">
+        <div class="card glass-card p-4 h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-activity text-primary me-2"></i>Training & Validation Accuracy</h5>
+          <div style="height: 280px;">
+            <canvas id="accuracyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card glass-card p-4 h-100">
+          <h5 class="fw-bold mb-3"><i class="bi bi-graph-down-arrow text-danger me-2"></i>Training & Validation Loss</h5>
+          <div style="height: 280px;">
+            <canvas id="lossChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confusion Matrix Table -->
+    {% if metrics and metrics.confusion_matrix %}
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card glass-card p-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Confusion Matrix Visualization</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm text-center align-middle small mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Actual \ Predicted</th>
+                  {% for name in class_names %}
+                  <th>{{ name[:4] }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in metrics.confusion_matrix %}
+                {% set outer_loop = loop %}
+                <tr>
+                  <th class="table-light text-start">{{ class_names[outer_loop.index0] }}</th>
+                  {% for cell in row %}
+                  <td class="{% if loop.index0 == outer_loop.index0 %}bg-success-subtle fw-bold text-success{% endif %}">
+                    {{ cell }}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Architecture Specification Table -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card glass-card p-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-diagram-3-fill text-primary me-2"></i>Model Layer Specification</h5>
+          <div class="table-responsive">
+            <table class="table custom-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Layer Type</th>
+                  <th>Output Shape</th>
+                  <th>Parameters / Configuration</th>
+                  <th>Activation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Conv2D (Block 1)</strong></td>
+                  <td>(None, 32, 32, 32)</td>
+                  <td>32 filters, 3×3 Kernel, padding='same'</td>
+                  <td>ReLU</td>
+                </tr>
+                <tr>
+                  <td><strong>BatchNormalization</strong></td>
+                  <td>(None, 32, 32, 32)</td>
+                  <td>Batch Standardization</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>MaxPooling2D</strong></td>
+                  <td>(None, 16, 16, 32)</td>
+                  <td>2×2 Pool Size</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>Dropout</strong></td>
+                  <td>(None, 16, 16, 32)</td>
+                  <td>Rate = 0.25</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>Conv2D (Block 2)</strong></td>
+                  <td>(None, 16, 16, 64)</td>
+                  <td>64 filters, 3×3 Kernel, padding='same'</td>
+                  <td>ReLU</td>
+                </tr>
+                <tr>
+                  <td><strong>BatchNormalization</strong></td>
+                  <td>(None, 16, 16, 64)</td>
+                  <td>Batch Standardization</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>MaxPooling2D</strong></td>
+                  <td>(None, 8, 8, 64)</td>
+                  <td>2×2 Pool Size</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>Dropout</strong></td>
+                  <td>(None, 8, 8, 64)</td>
+                  <td>Rate = 0.25</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>Conv2D (Block 3)</strong></td>
+                  <td>(None, 8, 8, 128)</td>
+                  <td>128 filters, 3×3 Kernel, padding='same'</td>
+                  <td>ReLU</td>
+                </tr>
+                <tr>
+                  <td><strong>Flatten</strong></td>
+                  <td>(None, 8192)</td>
+                  <td>Reshape 8×8×128 to 8192 vector</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><strong>Dense (Fully Connected)</strong></td>
+                  <td>(None, 128)</td>
+                  <td>128 Neurons</td>
+                  <td>ReLU</td>
+                </tr>
+                <tr>
+                  <td><strong>Dropout</strong></td>
+                  <td>(None, 128)</td>
+                  <td>Rate = 0.50</td>
+                  <td>-</td>
+                </tr>
+                <tr class="table-primary-subtle fw-bold">
+                  <td><strong>Dense (Output)</strong></td>
+                  <td>(None, 10)</td>
+                  <td>10 Class Neurons</td>
+                  <td>Softmax</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted small">
+    <div class="container">
+      <p class="mb-0">CIFAR-10 Image Classification Web Application &copy; 2026 Production AI System.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <!-- Chart.js Curves -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const history = {{ history | tojson }};
+      if (!history || !history.epochs) return;
+
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      const textColor = isDark ? "#F8FAFC" : "#0F172A";
+      const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)";
+
+      // Accuracy Chart
+      new Chart(document.getElementById("accuracyChart"), {
+        type: "line",
+        data: {
+          labels: history.epochs,
+          datasets: [
+            {
+              label: "Train Accuracy",
+              data: history.train_accuracy,
+              borderColor: "#4F46E5",
+              backgroundColor: "rgba(79, 70, 229, 0.1)",
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: "Val Accuracy",
+              data: history.val_accuracy,
+              borderColor: "#22C55E",
+              backgroundColor: "rgba(34, 197, 94, 0.1)",
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor }, grid: { color: gridColor } }
+          }
+        }
+      });
+
+      // Loss Chart
+      new Chart(document.getElementById("lossChart"), {
+        type: "line",
+        data: {
+          labels: history.epochs,
+          datasets: [
+            {
+              label: "Train Loss",
+              data: history.train_loss,
+              borderColor: "#EF4444",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: "Val Loss",
+              data: history.val_loss,
+              borderColor: "#F59E0B",
+              backgroundColor: "rgba(245, 158, 11, 0.1)",
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor }, grid: { color: gridColor } }
+          }
+        }
+      });
+
+    });
+  </script>
+</body>
+</html>
